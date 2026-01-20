@@ -12,18 +12,12 @@ import {
     Share2,
     Calendar,
     Tag,
-    FileText
+    FileText,
+    Palette,
+    Sparkles
 } from "lucide-react";
 import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
-
-interface Photo {
-    id: number;
-    url: string;
-    category: string;
-    tags: string[];
-    description: string;
-    date: string;
-}
+import type { Photo, AIMetadata } from "@/types";
 
 interface PhotoModalProps {
     photo: Photo;
@@ -33,6 +27,12 @@ interface PhotoModalProps {
 }
 
 export function PhotoModal({ photo, onClose, onNext, onPrevious }: PhotoModalProps) {
+    const metadata: AIMetadata = photo.metadata || {
+        category: "Sem categoria",
+        tags: [],
+        description: photo.file_name
+    };
+
     return (
         <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
             <div className="w-full max-w-7xl h-[90vh] flex gap-4">
@@ -58,6 +58,7 @@ export function PhotoModal({ photo, onClose, onNext, onPrevious }: PhotoModalPro
                                 size="icon"
                                 className="rounded-full"
                                 style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', color: 'white' }}
+                                onClick={() => window.open(photo.storage_url, '_blank')}
                             >
                                 <Download className="w-5 h-5" />
                             </Button>
@@ -102,8 +103,8 @@ export function PhotoModal({ photo, onClose, onNext, onPrevious }: PhotoModalPro
 
                         <div className="max-h-full max-w-full flex items-center justify-center">
                             <ImageWithFallback
-                                src={photo.url}
-                                alt={photo.description}
+                                src={photo.storage_url}
+                                alt={photo.file_name}
                                 className="max-h-[calc(90vh-120px)] max-w-full object-contain rounded-lg"
                             />
                         </div>
@@ -124,11 +125,14 @@ export function PhotoModal({ photo, onClose, onNext, onPrevious }: PhotoModalPro
                 <Card className="w-96 flex flex-col" style={{ backgroundColor: 'white' }}>
                     {/* Header */}
                     <div className="p-6 border-b" style={{ borderColor: '#E0C7A0' }}>
-                        <h3 className="text-xl mb-2" style={{ fontFamily: 'Poppins, sans-serif', color: '#2C3E50' }}>
-                            Detalhes da Foto
-                        </h3>
+                        <div className="flex items-center gap-2 mb-2">
+                            <Sparkles className="w-5 h-5" style={{ color: '#AF8B5F' }} />
+                            <h3 className="text-xl" style={{ fontFamily: 'Poppins, sans-serif', color: '#2C3E50' }}>
+                                Metadados da IA
+                            </h3>
+                        </div>
                         <p className="text-sm" style={{ color: '#7F8C8D' }}>
-                            Metadados gerados pela IA
+                            {photo.file_name}
                         </p>
                     </div>
 
@@ -139,7 +143,7 @@ export function PhotoModal({ photo, onClose, onNext, onPrevious }: PhotoModalPro
                             <div>
                                 <div className="flex items-center gap-2 mb-3">
                                     <Tag className="w-4 h-4" style={{ color: '#AF8B5F' }} />
-                                    <h4 className="text-sm" style={{ fontFamily: 'Poppins, sans-serif', color: '#2C3E50' }}>
+                                    <h4 className="text-sm font-medium" style={{ color: '#2C3E50' }}>
                                         Categoria
                                     </h4>
                                 </div>
@@ -147,81 +151,124 @@ export function PhotoModal({ photo, onClose, onNext, onPrevious }: PhotoModalPro
                                     className="text-sm px-3 py-1"
                                     style={{ backgroundColor: '#E0C7A0', color: '#AF8B5F' }}
                                 >
-                                    {photo.category}
+                                    {metadata.category}
                                 </Badge>
                             </div>
 
                             {/* Tags */}
-                            <div>
-                                <div className="flex items-center gap-2 mb-3">
-                                    <Tag className="w-4 h-4" style={{ color: '#AF8B5F' }} />
-                                    <h4 className="text-sm" style={{ fontFamily: 'Poppins, sans-serif', color: '#2C3E50' }}>
-                                        Tags
-                                    </h4>
+                            {metadata.tags && metadata.tags.length > 0 && (
+                                <div>
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <Tag className="w-4 h-4" style={{ color: '#AF8B5F' }} />
+                                        <h4 className="text-sm font-medium" style={{ color: '#2C3E50' }}>
+                                            Tags
+                                        </h4>
+                                    </div>
+                                    <div className="flex flex-wrap gap-2">
+                                        {metadata.tags.map((tag, index) => (
+                                            <Badge
+                                                key={index}
+                                                variant="outline"
+                                                className="text-sm"
+                                                style={{ borderColor: '#AF8B5F', color: '#AF8B5F' }}
+                                            >
+                                                {tag}
+                                            </Badge>
+                                        ))}
+                                    </div>
                                 </div>
-                                <div className="flex flex-wrap gap-2">
-                                    {photo.tags.map((tag, index) => (
-                                        <Badge
-                                            key={index}
-                                            variant="outline"
-                                            className="text-sm"
-                                            style={{ borderColor: '#AF8B5F', color: '#AF8B5F' }}
-                                        >
-                                            {tag}
-                                        </Badge>
-                                    ))}
-                                </div>
-                            </div>
+                            )}
 
                             {/* Description */}
-                            <div>
-                                <div className="flex items-center gap-2 mb-3">
-                                    <FileText className="w-4 h-4" style={{ color: '#AF8B5F' }} />
-                                    <h4 className="text-sm" style={{ fontFamily: 'Poppins, sans-serif', color: '#2C3E50' }}>
-                                        Descrição
-                                    </h4>
+                            {metadata.description && (
+                                <div>
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <FileText className="w-4 h-4" style={{ color: '#AF8B5F' }} />
+                                        <h4 className="text-sm font-medium" style={{ color: '#2C3E50' }}>
+                                            Descrição
+                                        </h4>
+                                    </div>
+                                    <p className="text-sm" style={{ color: '#7F8C8D', lineHeight: '1.6' }}>
+                                        {metadata.description}
+                                    </p>
                                 </div>
-                                <p className="text-sm" style={{ color: '#7F8C8D', lineHeight: '1.6' }}>
-                                    {photo.description}
-                                </p>
-                            </div>
+                            )}
+
+                            {/* Colors */}
+                            {metadata.colors && metadata.colors.length > 0 && (
+                                <div>
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <Palette className="w-4 h-4" style={{ color: '#AF8B5F' }} />
+                                        <h4 className="text-sm font-medium" style={{ color: '#2C3E50' }}>
+                                            Cores Dominantes
+                                        </h4>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        {metadata.colors.map((color, index) => (
+                                            <div
+                                                key={index}
+                                                className="w-8 h-8 rounded-lg shadow-sm border"
+                                                style={{ backgroundColor: color, borderColor: '#E0C7A0' }}
+                                                title={color}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
 
                             {/* Date */}
                             <div>
                                 <div className="flex items-center gap-2 mb-3">
                                     <Calendar className="w-4 h-4" style={{ color: '#AF8B5F' }} />
-                                    <h4 className="text-sm" style={{ fontFamily: 'Poppins, sans-serif', color: '#2C3E50' }}>
-                                        Data
+                                    <h4 className="text-sm font-medium" style={{ color: '#2C3E50' }}>
+                                        Data de Upload
                                     </h4>
                                 </div>
                                 <p className="text-sm" style={{ color: '#7F8C8D' }}>
-                                    {new Date(photo.date).toLocaleDateString('pt-BR', {
+                                    {new Date(photo.created_at).toLocaleDateString('pt-BR', {
                                         day: 'numeric',
                                         month: 'long',
-                                        year: 'numeric'
+                                        year: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit'
                                     })}
                                 </p>
                             </div>
 
-                            {/* AI Metadata (JSON-like display) */}
+                            {/* Confidence */}
+                            {metadata.confidence !== undefined && (
+                                <div>
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <Sparkles className="w-4 h-4" style={{ color: '#AF8B5F' }} />
+                                        <h4 className="text-sm font-medium" style={{ color: '#2C3E50' }}>
+                                            Confiança da IA
+                                        </h4>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex-1 h-2 rounded-full" style={{ backgroundColor: '#E0C7A0' }}>
+                                            <div
+                                                className="h-full rounded-full"
+                                                style={{
+                                                    width: `${Math.round(metadata.confidence * 100)}%`,
+                                                    backgroundColor: '#AF8B5F'
+                                                }}
+                                            />
+                                        </div>
+                                        <span className="text-sm font-medium" style={{ color: '#AF8B5F' }}>
+                                            {Math.round(metadata.confidence * 100)}%
+                                        </span>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Raw JSON */}
                             <div>
-                                <h4 className="text-sm mb-3" style={{ fontFamily: 'Poppins, sans-serif', color: '#2C3E50' }}>
-                                    Metadados Completos
+                                <h4 className="text-sm font-medium mb-3" style={{ color: '#2C3E50' }}>
+                                    JSON Completo
                                 </h4>
-                                <div className="p-4 rounded-lg text-xs font-mono" style={{ backgroundColor: '#F7F7F7' }}>
+                                <div className="p-4 rounded-lg text-xs font-mono overflow-x-auto" style={{ backgroundColor: '#F7F7F7' }}>
                                     <pre style={{ color: '#2C3E50', whiteSpace: 'pre-wrap' }}>
-                                        {`{
-  "id": ${photo.id},
-  "category": "${photo.category}",
-  "tags": [${photo.tags.map(t => `"${t}"`).join(', ')}],
-  "description": "${photo.description}",
-  "date": "${photo.date}",
-  "aiConfidence": 0.95,
-  "objects": ["person", "landscape"],
-  "colors": ["blue", "green", "brown"],
-  "location": "auto-detected",
-  "faces": 0
-}`}
+                                        {JSON.stringify(metadata, null, 2)}
                                     </pre>
                                 </div>
                             </div>

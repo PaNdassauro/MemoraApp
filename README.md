@@ -1,73 +1,123 @@
-# React + TypeScript + Vite
+# Memora - Intelligent Asset Manager
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Um Asset Manager inteligente estilo Google Drive com classificação automática de fotos por IA.
 
-Currently, two official plugins are available:
+![Memora](https://images.unsplash.com/photo-1627353802139-9820d31b6a7c?w=800)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## React Compiler
+- **Upload de Fotos** - Drag & drop ou seleção de arquivos
+- **Classificação por IA** - Categorização automática com tags, descrição e cores
+- **Busca Semântica** - Pesquise por tags, categorias ou descrições
+- **Grid Responsivo** - Visualização estilo Drive
+- **Modal de Detalhes** - Veja metadados completos da IA
+- **Categorias Dinâmicas** - Sidebar atualiza automaticamente
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Stack Técnica
 
-## Expanding the ESLint configuration
+| Tecnologia | Uso |
+|------------|-----|
+| React + Vite | Frontend |
+| TypeScript | Tipagem |
+| Tailwind CSS | Estilos |
+| Lucide React | Ícones |
+| Supabase | Backend/DB/Storage |
+| pgvector | Busca semântica |
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 📦 Instalação
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+```bash
+# Clone o repositório
+git clone https://github.com/PaNdassauro/MemoraApp.git
+cd MemoraApp
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+# Instale as dependências
+npm install
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Configure as variáveis de ambiente
+cp .env.example .env
+# Edite .env com suas credenciais do Supabase
+
+# Rode o projeto
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🔧 Configuração do Supabase
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 1. Crie um projeto no Supabase
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Acesse [supabase.com](https://supabase.com) e crie um novo projeto.
+
+### 2. Aplique a migration
+
+No SQL Editor do Supabase, execute o conteúdo de:
 ```
+supabase/migrations/001_create_photos_table.sql
+```
+
+### 3. Crie o bucket de Storage
+
+1. Vá em Storage > Create new bucket
+2. Nome: `photos`
+3. Marque como **public** para permitir visualização das imagens
+
+### 4. Configure as variáveis
+
+Copie as credenciais de Settings > API para o arquivo `.env`:
+```env
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
+
+## 📁 Estrutura do Projeto
+
+```
+src/
+├── components/
+│   ├── ui/              # 48 componentes UI (Button, Card, etc.)
+│   ├── figma/           # ImageWithFallback helper
+│   ├── LandingPage.tsx  # Landing page
+│   ├── AppUI.tsx        # Interface principal
+│   └── PhotoModal.tsx   # Modal de visualização
+├── hooks/
+│   ├── useImageProcessor.ts  # IA Mock (Bibliotecário)
+│   ├── useUpload.ts          # Upload para Supabase
+│   └── usePhotos.ts          # CRUD de fotos
+├── styles/
+│   └── theme.css        # Design system
+├── lib/
+│   └── supabase.ts      # Cliente Supabase
+└── types/
+    └── index.ts         # Tipos TypeScript
+```
+
+## 🤖 Como Funciona a IA (Mock)
+
+Atualmente, o hook `useImageProcessor.ts` simula a classificação de IA. 
+
+Para integrar uma IA real:
+1. Crie uma Edge Function no Supabase
+2. Chame OpenAI Vision API ou Google Cloud Vision
+3. Retorne o JSON no formato:
+
+```json
+{
+  "category": "Viagem",
+  "tags": ["praia", "verão", "férias"],
+  "description": "Foto de uma praia tropical ao pôr do sol",
+  "colors": ["#FF6B35", "#004E89", "#1A1A2E"],
+  "confidence": 0.95
+}
+```
+
+## 📝 Próximos Passos
+
+- [ ] Autenticação com Supabase Auth
+- [ ] Integração real com OpenAI Vision
+- [ ] Embeddings para busca semântica
+- [ ] Álbuns e pastas
+- [ ] Compartilhamento de fotos
+
+## 📄 Licença
+
+MIT

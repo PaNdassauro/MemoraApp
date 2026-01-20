@@ -59,12 +59,12 @@ export function useUpload(): UseUploadReturn {
 
                 updateUpload(file, { progress: 50 });
 
-                // Get public URL
-                const { data: urlData } = supabase.storage
+                // Get signed URL for private bucket
+                const { data: signedData } = await supabase.storage
                     .from(PHOTOS_BUCKET)
-                    .getPublicUrl(filePath);
+                    .createSignedUrl(filePath, 3600);
 
-                const storageUrl = urlData.publicUrl;
+                const storageUrl = signedData?.signedUrl || '';
 
                 // Update status to processing (AI)
                 updateUpload(file, { status: 'processing', progress: 60 });
@@ -74,17 +74,19 @@ export function useUpload(): UseUploadReturn {
 
                 updateUpload(file, { progress: 80 });
 
-                // Save to database
+                // Save to database with file_path for future signed URL generation
                 const { error: dbError } = await supabase
                     .from('photos')
                     .insert({
-                        storage_url: storageUrl,
+                        storage_url: storageUrl,  // Initial signed URL
+                        file_path: filePath,       // Store path for regenerating signed URLs
                         file_name: file.name,
                         metadata
                     });
 
                 if (dbError) {
-                    console.warn('Database error (expected if not configured):', dbError.message);
+                    console.error('Database error:', dbError.message);
+                    throw new Error(dbError.message);
                 }
 
                 // Complete

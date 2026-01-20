@@ -4,6 +4,7 @@ export interface Photo {
     created_at: string;
     user_id: string;
     storage_url: string;
+    file_path: string;  // Path in storage bucket for signed URL generation
     file_name: string;
     metadata: AIMetadata | null;
     embedding: number[] | null;

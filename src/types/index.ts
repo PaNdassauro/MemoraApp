@@ -43,3 +43,7 @@ export interface StorageInfo {
     total: number;
     unit: 'MB' | 'GB';
 }
+
+// Re-export briefing types (Casamentos, Fornecedores, Mídias)
+export * from './briefing';
+

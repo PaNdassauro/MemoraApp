@@ -1,5 +1,22 @@
 {
-  "node": {},
+  "node": {
+    "e14efe6921777f066ee2f3266cca17db420f4216": {
+      "workers": {
+        "app/weddings/[id]/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Fpandassauro%2FMemoraApp%2Fsrc%2Fapp%2Factions%2Fupload-media.ts%22%2C%5B%22uploadMedia%22%5D%5D%2C%5B%22%2Fhome%2Fpandassauro%2FMemoraApp%2Fsrc%2Fapp%2Factions%2Fanalyze-media.ts%22%2C%5B%22analyzeMedia%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/weddings/[id]/page": "action-browser"
+      }
+    },
+    "ba2ec2063417e6dae0d7efa07b243e8e15681a38": {
+      "workers": {
+        "app/weddings/[id]/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Fpandassauro%2FMemoraApp%2Fsrc%2Fapp%2Factions%2Fupload-media.ts%22%2C%5B%22uploadMedia%22%5D%5D%2C%5B%22%2Fhome%2Fpandassauro%2FMemoraApp%2Fsrc%2Fapp%2Factions%2Fanalyze-media.ts%22%2C%5B%22analyzeMedia%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/weddings/[id]/page": "action-browser"
+      }
+    }
+  },
   "edge": {},
   "encryptionKey": "GRCkKAVcEEarHej0PViNK4AK96ExLynmCA3H3wN3n0o="
 }

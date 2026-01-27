@@ -23,7 +23,14 @@ export default function EditWeddingPage({ params }: { params: { id: string } }) 
                     const normalizedData = {
                         ...data,
                         vendors: data.wedding_vendors || [],
-                        media: data.media || []
+                        media: (data.media || []).map((m: any) => ({
+                            ...m,
+                            description: m.description || "",
+                            tags: m.tags || [],
+                            moment: m.moment || undefined,
+                            usage_override: m.usage_override || "Liberado",
+                            publication_status: m.publication_status || "Não usado"
+                        }))
                     };
                     setInitialData(normalizedData);
                 }

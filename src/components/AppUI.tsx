@@ -167,10 +167,7 @@ export function AppUI() {
                             <Folder className="w-5 h-5" />
                             Minhas Pastas
                         </Button>
-                        <Button variant="ghost" className="w-full justify-start gap-3 transition-transform hover:translate-x-1" style={{ color: '#7F8C8D' }}>
-                            <FolderPlus className="w-5 h-5" />
-                            Álbuns Sugeridos
-                        </Button>
+
                         <Button variant="ghost" className="w-full justify-start gap-3 transition-transform hover:translate-x-1" style={{ color: '#7F8C8D' }}>
                             <Heart className="w-5 h-5" />
                             Favoritos

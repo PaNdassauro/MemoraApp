@@ -66,12 +66,15 @@ export function FolderScreen({ parentId = null }: FolderScreenProps) {
                         <Input
                             placeholder="Buscar pasta..."
                             className="pl-9 h-9"
+                            value={folderSearchQuery}
+                            onChange={(e) => setFolderSearchQuery(e.target.value)}
                         />
                     </div>
                     <Button
                         onClick={() => setIsCreateModalOpen(true)}
                         className="gap-2"
-                        style={{ backgroundColor: '#AF8B5F', color: 'white' }}
+                        variant="outline"
+                        style={{ borderColor: '#E0C7A0', color: '#AF8B5F' }}
                     >
                         <Plus className="w-4 h-4" />
                         Nova Pasta
@@ -115,7 +118,7 @@ export function FolderScreen({ parentId = null }: FolderScreenProps) {
                 <div className="mt-8 border-t pt-8">
                     <PhotoBrowser
                         folderId={parentId}
-                        hideHeader={true}
+                        hideHeader={false}
                         title="Arquivos nesta pasta"
                     />
                 </div>

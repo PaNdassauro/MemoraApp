@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -19,7 +20,8 @@ import {
     Image as ImageIcon,
     X,
     Loader2,
-    CheckCircle
+    CheckCircle,
+    HeartHandshake
 } from "lucide-react";
 import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
 import { PhotoModal } from "@/components/PhotoModal";
@@ -39,6 +41,7 @@ export function AppUI() {
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [previews, setPreviews] = useState<{ file: File; url: string }[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const router = useRouter();
 
     // Real hooks
     const { photos, isLoading, refetch, deletePhoto } = usePhotos();
@@ -148,6 +151,15 @@ export function AppUI() {
                         <Button variant="ghost" className="w-full justify-start gap-3" style={{ color: '#2C3E50' }}>
                             <Home className="w-5 h-5" />
                             Início
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            className="w-full justify-start gap-3"
+                            style={{ color: '#7F8C8D' }}
+                            onClick={() => router.push("/weddings")}
+                        >
+                            <HeartHandshake className="w-5 h-5" />
+                            Casamentos
                         </Button>
                         <Button variant="ghost" className="w-full justify-start gap-3" style={{ color: '#7F8C8D' }}>
                             <Folder className="w-5 h-5" />

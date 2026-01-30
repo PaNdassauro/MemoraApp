@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { LandingPage } from "@/components/LandingPage";
 import { DashboardLayout } from "@/components/dashboard-layout";

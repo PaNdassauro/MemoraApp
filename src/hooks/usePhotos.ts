@@ -10,7 +10,7 @@ interface UsePhotosReturn {
     deletePhoto: (id: string) => Promise<void>;
 }
 
-export function usePhotos(): UsePhotosReturn {
+export function usePhotos(folderId?: string | null): UsePhotosReturn {
     const [photos, setPhotos] = useState<Photo[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -20,10 +20,20 @@ export function usePhotos(): UsePhotosReturn {
         setError(null);
 
         try {
-            const { data, error: fetchError } = await supabase
+            let query = supabase
                 .from('photos')
                 .select('*')
                 .order('created_at', { ascending: false });
+
+            if (folderId !== undefined) {
+                if (folderId === null) {
+                    query = query.is('folder_id', null);
+                } else {
+                    query = query.eq('folder_id', folderId);
+                }
+            }
+
+            const { data, error: fetchError } = await query;
 
             if (fetchError) {
                 // Expected error if database not configured yet
@@ -66,7 +76,7 @@ export function usePhotos(): UsePhotosReturn {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [folderId]);
 
     const deletePhoto = useCallback(async (id: string) => {
         try {

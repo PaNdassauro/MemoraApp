@@ -14,6 +14,7 @@ import {
 import { useFolders } from "@/hooks/use-folders";
 import Link from "next/link";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { PhotoBrowser } from "./photo-browser";
 
 interface FolderScreenProps {
     parentId?: string | null;
@@ -24,6 +25,11 @@ export function FolderScreen({ parentId = null }: FolderScreenProps) {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [newFolderName, setNewFolderName] = useState("");
     const [isCreating, setIsCreating] = useState(false);
+    const [folderSearchQuery, setFolderSearchQuery] = useState("");
+
+    const filteredFolders = folders.filter(f =>
+        f.name.toLowerCase().includes(folderSearchQuery.toLowerCase())
+    );
 
     const handleCreateFolder = async () => {
         if (!newFolderName.trim()) return;
@@ -105,6 +111,14 @@ export function FolderScreen({ parentId = null }: FolderScreenProps) {
                         ))}
                     </div>
                 )}
+
+                <div className="mt-8 border-t pt-8">
+                    <PhotoBrowser
+                        folderId={parentId}
+                        hideHeader={true}
+                        title="Arquivos nesta pasta"
+                    />
+                </div>
             </ScrollArea>
 
             {/* Create Folder Dialog */}

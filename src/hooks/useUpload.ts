@@ -4,7 +4,7 @@ import { useImageProcessor } from './useImageProcessor';
 import type { UploadProgress } from '../types';
 
 interface UseUploadReturn {
-    uploadFiles: (files: File[]) => Promise<void>;
+    uploadFiles: (files: File[], folderId?: string | null) => Promise<void>;
     uploads: UploadProgress[];
     isUploading: boolean;
     clearCompleted: () => void;
@@ -21,7 +21,7 @@ export function useUpload(): UseUploadReturn {
         );
     }, []);
 
-    const uploadFiles = useCallback(async (files: File[]) => {
+    const uploadFiles = useCallback(async (files: File[], folderId: string | null = null) => {
         if (files.length === 0) return;
 
         setIsUploading(true);
@@ -81,7 +81,9 @@ export function useUpload(): UseUploadReturn {
                         storage_url: storageUrl,  // Initial signed URL
                         file_path: filePath,       // Store path for regenerating signed URLs
                         file_name: file.name,
-                        metadata
+
+                        metadata,
+                        folder_id: folderId
                     });
 
                 if (dbError) {

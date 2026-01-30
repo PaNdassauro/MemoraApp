@@ -1,22 +1,16 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
     Search,
     Upload,
-    User,
-    Eye,
-    Image as ImageIcon,
     X,
     Loader2,
-    CheckCircle,
-    Trash2
+    CheckCircle
 } from "lucide-react";
-import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
 import { PhotoModal } from "@/components/PhotoModal";
 import { usePhotos } from "@/hooks/usePhotos";
 import { useUpload } from "@/hooks/useUpload";
@@ -28,45 +22,24 @@ interface PhotoBrowserProps {
     hideHeader?: boolean;
     title?: string;
     scrollable?: boolean;
+    ownerId?: string;
 }
 
 export function PhotoBrowser({
     folderId,
     hideHeader = false,
     title = "Fotos",
-    scrollable = true
+    scrollable = true,
+    ownerId
 }: PhotoBrowserProps) {
-    // ... hooks ...
-
-    // Conditional Wrapper Component
-    const ContentWrapper = scrollable ? ScrollArea : "div";
-    const wrapperProps = scrollable ? { className: "flex-1 p-6" } : { className: "p-6" };
-
-    // ... handleFileSelect etc ...
-
-    // RENDER:
-    // ...
-    // Instead of: <div className="flex-1 p-6">
-    // Use: <ContentWrapper {...wrapperProps}>
-
-    // Wait, I need to match the return block.
-    // I will replace the start of the render block later? 
-    // Actually the tool replaces chunks. I need to change the interface and the wrapper.
-
-    // Let's modify the props and the Return JSX.
-    // I will split this into two edits if needed, or one big one if localized.
-    // Interface is at top. Render is at bottom.
-    // I can stick to one Replace if I capture widely? No, confusing.
-    // I'll do interface first.
-
     const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [previews, setPreviews] = useState<{ file: File; url: string }[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Real hooks
-    const { photos, isLoading, refetch, deletePhoto } = usePhotos(folderId);
+    // Hooks
+    const { photos, isLoading, refetch, deletePhoto } = usePhotos(folderId, ownerId);
     const { uploadFiles, uploads, isUploading, clearCompleted } = useUpload();
 
     // Filter photos based on search

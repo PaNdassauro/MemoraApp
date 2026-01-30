@@ -10,7 +10,7 @@ interface UsePhotosReturn {
     deletePhoto: (id: string) => Promise<void>;
 }
 
-export function usePhotos(folderId?: string | null): UsePhotosReturn {
+export function usePhotos(folderId?: string | null, ownerId?: string): UsePhotosReturn {
     const [photos, setPhotos] = useState<Photo[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -24,6 +24,10 @@ export function usePhotos(folderId?: string | null): UsePhotosReturn {
                 .from('photos')
                 .select('*')
                 .order('created_at', { ascending: false });
+
+            if (ownerId) {
+                query = query.eq('user_id', ownerId);
+            }
 
             if (folderId !== undefined) {
                 if (folderId === null) {

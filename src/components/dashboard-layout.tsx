@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { Sidebar } from "@/components/sidebar";
 import { usePhotos } from "@/hooks/usePhotos";
 

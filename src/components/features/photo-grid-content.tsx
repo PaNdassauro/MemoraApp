@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 // Logic extracted from PhotoBrowser to avoid duplication
 import { Card } from "@/components/ui/card";

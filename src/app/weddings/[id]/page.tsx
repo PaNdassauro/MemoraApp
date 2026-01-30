@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { useEffect, useState } from "react";
 import { WeddingForm } from "@/components/weddings/wedding-form";
 import { useWeddings } from "@/hooks/use-weddings";
@@ -8,16 +9,17 @@ import { WeddingFormValues, MediaFormValues } from "@/lib/schemas/wedding";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
-export default function EditWeddingPage({ params }: { params: { id: string } }) {
+export default function EditWeddingPage({ params }: { params: Promise<{ id: string }> }) {
     const { getWeddingDetails, updateWedding, addMedia, deleteMedia, updateMedia } = useWeddings();
     const router = useRouter();
+    const { id: weddingId } = React.use(params);
     const [initialData, setInitialData] = useState<WeddingFormValues | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function loadWedding() {
             try {
-                const data = await getWeddingDetails(params.id);
+                const data = await getWeddingDetails(weddingId);
                 if (data) {
                     // Normalize data structure for the form
                     const normalizedData = {
@@ -42,16 +44,16 @@ export default function EditWeddingPage({ params }: { params: { id: string } }) 
         }
         loadWedding();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [params.id]);
+    }, [weddingId]);
 
     const handleSubmit = async (data: WeddingFormValues) => {
-        await updateWedding(params.id, data);
+        await updateWedding(weddingId, data);
         router.push("/weddings");
     };
 
     // Media operations that pass the wedding ID
     const handleAddMedia = async (media: MediaFormValues) => {
-        return await addMedia(params.id, media);
+        return await addMedia(weddingId, media);
     };
 
     const handleDeleteMedia = async (mediaId: string) => {
@@ -83,7 +85,7 @@ export default function EditWeddingPage({ params }: { params: { id: string } }) 
                     <WeddingForm
                         defaultValues={initialData}
                         onSubmit={handleSubmit}
-                        weddingId={params.id}
+                        weddingId={weddingId}
                         onAddMedia={handleAddMedia}
                         onDeleteMedia={handleDeleteMedia}
                         onUpdateMedia={handleUpdateMedia}

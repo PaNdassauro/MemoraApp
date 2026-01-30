@@ -120,6 +120,7 @@ export function FolderScreen({ parentId = null }: FolderScreenProps) {
                         folderId={parentId}
                         hideHeader={false}
                         title="Arquivos nesta pasta"
+                        scrollable={false}
                     />
                 </div>
             </ScrollArea>

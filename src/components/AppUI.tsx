@@ -148,36 +148,36 @@ export function AppUI() {
                 {/* Navigation */}
                 <ScrollArea className="flex-1 p-4">
                     <nav className="space-y-2">
-                        <Button variant="ghost" className="w-full justify-start gap-3" style={{ color: '#2C3E50' }}>
+                        <Button variant="ghost" className="w-full justify-start gap-3 transition-transform hover:translate-x-1" style={{ color: '#2C3E50' }}>
                             <Home className="w-5 h-5" />
                             Início
                         </Button>
                         <Button
                             variant="ghost"
-                            className="w-full justify-start gap-3"
+                            className="w-full justify-start gap-3 transition-transform hover:translate-x-1"
                             style={{ color: '#7F8C8D' }}
                             onClick={() => router.push("/weddings")}
                         >
                             <HeartHandshake className="w-5 h-5" />
                             Casamentos
                         </Button>
-                        <Button variant="ghost" className="w-full justify-start gap-3" style={{ color: '#7F8C8D' }}>
+                        <Button variant="ghost" className="w-full justify-start gap-3 transition-transform hover:translate-x-1" style={{ color: '#7F8C8D' }}>
                             <Folder className="w-5 h-5" />
                             Minhas Pastas
                         </Button>
-                        <Button variant="ghost" className="w-full justify-start gap-3" style={{ color: '#7F8C8D' }}>
+                        <Button variant="ghost" className="w-full justify-start gap-3 transition-transform hover:translate-x-1" style={{ color: '#7F8C8D' }}>
                             <FolderPlus className="w-5 h-5" />
                             Álbuns Sugeridos
                         </Button>
-                        <Button variant="ghost" className="w-full justify-start gap-3" style={{ color: '#7F8C8D' }}>
+                        <Button variant="ghost" className="w-full justify-start gap-3 transition-transform hover:translate-x-1" style={{ color: '#7F8C8D' }}>
                             <Heart className="w-5 h-5" />
                             Favoritos
                         </Button>
-                        <Button variant="ghost" className="w-full justify-start gap-3" style={{ color: '#7F8C8D' }}>
+                        <Button variant="ghost" className="w-full justify-start gap-3 transition-transform hover:translate-x-1" style={{ color: '#7F8C8D' }}>
                             <Clock className="w-5 h-5" />
                             Recentes
                         </Button>
-                        <Button variant="ghost" className="w-full justify-start gap-3" style={{ color: '#7F8C8D' }}>
+                        <Button variant="ghost" className="w-full justify-start gap-3 transition-transform hover:translate-x-1" style={{ color: '#7F8C8D' }}>
                             <Trash2 className="w-5 h-5" />
                             Lixeira
                         </Button>

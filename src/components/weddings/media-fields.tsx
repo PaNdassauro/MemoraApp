@@ -193,7 +193,7 @@ export function MediaFields({ weddingId, onAddMedia, onDeleteMedia, onUpdateMedi
             </div>
 
             {fields.map((field, index) => (
-                <Card key={field.id} className="relative border-l-4 border-l-transparent hover:border-l-primary transition-colors">
+                <Card key={field.id} className="relative border-l-4 border-l-transparent hover:border-l-primary transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
                     <Button
                         type="button"
                         variant="ghost"
@@ -211,7 +211,7 @@ export function MediaFields({ weddingId, onAddMedia, onDeleteMedia, onUpdateMedi
                             {/* Left Column: Preview & Upload */}
                             <div className="w-full lg:w-1/2 space-y-4">
                                 <FormLabel>Preview & Foto</FormLabel>
-                                <div className="aspect-video rounded-md overflow-hidden border bg-muted flex items-center justify-center relative group">
+                                <div className="aspect-video rounded-md overflow-hidden border bg-muted flex items-center justify-center relative group transition-all duration-500 hover:shadow-md">
                                     {getValues(`media.${index}.file_url`) ? (
                                         <img
                                             src={getValues(`media.${index}.file_url`)}

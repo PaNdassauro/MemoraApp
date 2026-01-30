@@ -88,7 +88,10 @@ export default function WeddingsPage() {
                             </TableRow>
                         ) : (
                             filteredWeddings.map((wedding) => (
-                                <TableRow key={wedding.id}>
+                                <TableRow
+                                    key={wedding.id}
+                                    className="cursor-pointer hover:bg-muted/50 transition-all duration-300 hover:shadow-sm"
+                                >
                                     <TableCell className="font-medium">{wedding.couple_name}</TableCell>
                                     <TableCell>{format(new Date(wedding.wedding_date), 'dd/MM/yyyy')}</TableCell>
                                     <TableCell>{wedding.destination_city || '-'} {wedding.destination_country ? `(${wedding.destination_country})` : ''}</TableCell>

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useWeddings } from "@/hooks/use-weddings";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import {
     Table,
@@ -30,16 +30,26 @@ export default function WeddingsPage() {
 
     return (
         <div className="container mx-auto py-10 max-w-[95%] px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center mb-8">
+            <div className="flex flex-col gap-4 mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Casamentos</h1>
-                    <p className="text-muted-foreground">Gerencie o portfólio de eventos.</p>
+                    <Link href="/">
+                        <Button variant="ghost" className="pl-0 hover:bg-transparent hover:text-primary mb-2">
+                            <ArrowLeft className="mr-2 h-4 w-4" />
+                            Voltar
+                        </Button>
+                    </Link>
+                    <div className="flex justify-between items-center">
+                        <div>
+                            <h1 className="text-3xl font-bold tracking-tight">Casamentos</h1>
+                            <p className="text-muted-foreground">Gerencie o portfólio de eventos.</p>
+                        </div>
+                        <Link href="/weddings/new">
+                            <Button>
+                                <Plus className="mr-2 h-4 w-4" /> Novo Casamento
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
-                <Link href="/weddings/new">
-                    <Button>
-                        <Plus className="mr-2 h-4 w-4" /> Novo Casamento
-                    </Button>
-                </Link>
             </div>
 
             <div className="flex items-center py-4">

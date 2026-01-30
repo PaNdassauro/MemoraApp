@@ -122,14 +122,13 @@ export function Sidebar({ categories = [], photoCount = 0 }: SidebarProps) {
                         </Button>
                     </Link>
 
-                    <Link href="/weddings" className="block w-full">
+                    <Link href="/forms" className="block w-full">
                         <Button
                             variant="ghost"
-                            className={`w-full justify-start gap-3 transition-transform hover:translate-x-1 ${isActive('/weddings') ? 'bg-amber-50/50 hover:bg-amber-50' : ''}`}
-                            style={{ color: isActive('/weddings') ? '#AF8B5F' : '#7F8C8D' }}
+                            className={`w-full justify-start gap-3 transition-transform hover:translate-x-1 ${isActive('/forms') ? 'bg-amber-50/50 hover:bg-amber-50 text-[#AF8B5F]' : 'text-[#7F8C8D]'}`}
                         >
-                            <HeartHandshake className="w-5 h-5" />
-                            Casamentos
+                            <Tag className="w-5 h-5" />
+                            Formulários
                         </Button>
                     </Link>
 

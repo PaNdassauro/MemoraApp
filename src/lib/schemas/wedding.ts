@@ -89,6 +89,7 @@ export const weddingVendorSchema = z.object({
 export const mediaSchema = z.object({
     id: z.string().optional(),
     wedding_id: z.string().optional(),
+    folder_id: z.string().optional().nullable(),
     type: z.enum(['Foto', 'Vídeo', 'Reel', 'Corte']).default('Foto'),
     file_url: z.string().url("URL inválida").or(z.literal("")),
     thumbnail_url: z.string().url("URL inválida").optional().or(z.literal("")),
@@ -112,7 +113,9 @@ export const weddingSchema = z.object({
     }),
     destination_country: z.string().optional(),
     destination_city: z.string().optional(),
+    hotel_name: z.string().optional(),
     venue_name: z.string().optional(),
+    folder_id: z.string().optional().nullable(),
     wedding_type: WeddingTypeEnum,
     status: WeddingStatusEnum.default('Em produção'),
 

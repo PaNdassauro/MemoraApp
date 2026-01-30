@@ -20,15 +20,14 @@ export function usePhotos(folderId?: string | null, ownerId?: string): UsePhotos
         setError(null);
 
         try {
+            // SWITCH TO portfolio_media (The correct table for weddings)
             let query = supabase
-                .from('photos')
+                .from('portfolio_media')
                 .select('*')
                 .order('created_at', { ascending: false });
 
-            if (ownerId) {
-                query = query.eq('user_id', ownerId);
-            }
-
+            // Note: portfolio_media relies on RLS for user filtering, or wedding_id relationship
+            // We use folderId for filtering
             if (folderId !== undefined) {
                 if (folderId === null) {
                     query = query.is('folder_id', null);
@@ -40,8 +39,7 @@ export function usePhotos(folderId?: string | null, ownerId?: string): UsePhotos
             const { data, error: fetchError } = await query;
 
             if (fetchError) {
-                // Expected error if database not configured yet
-                console.warn('Fetch error (expected if not configured):', fetchError.message);
+                console.warn('Fetch error:', fetchError.message);
                 setPhotos([]);
                 return;
             }
@@ -51,28 +49,26 @@ export function usePhotos(folderId?: string | null, ownerId?: string): UsePhotos
                 return;
             }
 
-            // Generate signed URLs for private bucket
-            const photosWithSignedUrls = await Promise.all(
-                data.map(async (photo) => {
-                    // Extract file path from storage_url or use stored path
-                    const filePath = photo.file_path || photo.storage_url?.split('/').pop();
+            // Map portfolio_media to Photo interface
+            const mappedPhotos: Photo[] = data.map((item: any) => ({
+                id: item.id,
+                created_at: item.created_at,
+                user_id: item.user_id || "", // Fallback if column missing (usually handled by RLS)
+                storage_url: item.file_url, // Using public URL directly
+                file_path: item.file_url,   // Using URL as path/ID reference
+                file_name: item.file_url.split('/').pop() || 'image.jpg',
+                metadata: {
+                    category: item.moment || 'Geral',
+                    tags: item.tags || [],
+                    description: item.description || '',
+                    colors: [],
+                    objects: [],
+                    confidence: 1
+                },
+                embedding: null
+            }));
 
-                    if (filePath) {
-                        const { data: signedData } = await supabase.storage
-                            .from(PHOTOS_BUCKET)
-                            .createSignedUrl(filePath, 3600); // 1 hour expiry
-
-                        return {
-                            ...photo,
-                            storage_url: signedData?.signedUrl || photo.storage_url
-                        };
-                    }
-
-                    return photo;
-                })
-            );
-
-            setPhotos(photosWithSignedUrls);
+            setPhotos(mappedPhotos);
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Erro ao carregar fotos';
             setError(errorMessage);
@@ -84,19 +80,12 @@ export function usePhotos(folderId?: string | null, ownerId?: string): UsePhotos
 
     const deletePhoto = useCallback(async (id: string) => {
         try {
-            // Find photo to get file path
-            const photoToDelete = photos.find(p => p.id === id);
+            // Delete from database (Cascade should handle storage if configured, but let's be safe)
+            // For now, we only delete the DB record. Storage cleanup should be a separate trigger/job 
+            // or we'd need to parse the URL to get the storage path.
 
-            // Delete from storage first
-            if (photoToDelete?.file_path) {
-                await supabase.storage
-                    .from(PHOTOS_BUCKET)
-                    .remove([photoToDelete.file_path]);
-            }
-
-            // Delete from database
             const { error: deleteError } = await supabase
-                .from('photos')
+                .from('portfolio_media')
                 .delete()
                 .eq('id', id);
 

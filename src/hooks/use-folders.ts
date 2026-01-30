@@ -13,12 +13,16 @@ export interface Folder {
 export function useFolders(parentId: string | null = null, ownerId?: string) {
     const { user } = useAuth();
     const [folders, setFolders] = useState<Folder[]>([]);
+    const [currentFolder, setCurrentFolder] = useState<Folder | null>(null);
+    const [path, setPath] = useState<Folder[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     const fetchFolders = useCallback(async () => {
         if (!user) {
             setFolders([]);
+            setCurrentFolder(null);
+            setPath([]);
             setLoading(false);
             return;
         }
@@ -29,10 +33,8 @@ export function useFolders(parentId: string | null = null, ownerId?: string) {
             let accessibleUserIds: string[] = [];
 
             if (ownerId) {
-                // If specific owner requested, just check if we have access
                 accessibleUserIds = [ownerId];
             } else {
-                // Default: get our own + all accepted shares
                 const { data: sharedInvites } = await supabase
                     .from('user_invites')
                     .select('owner_id')
@@ -41,6 +43,37 @@ export function useFolders(parentId: string | null = null, ownerId?: string) {
 
                 const sharedOwnerIds = sharedInvites?.map(i => i.owner_id) || [];
                 accessibleUserIds = [user.id, ...sharedOwnerIds];
+            }
+
+            // Fetch current folder and its path if parentId is provided
+            if (parentId) {
+                const { data: folderData, error: folderError } = await supabase
+                    .from('folders')
+                    .select('*')
+                    .eq('id', parentId)
+                    .single();
+
+                if (folderError) throw folderError;
+                setCurrentFolder(folderData);
+
+                // Fetch path (ancestors)
+                const ancestors: Folder[] = [folderData];
+                let current = folderData;
+                while (current.parent_id) {
+                    const { data: parentData, error: parentError } = await supabase
+                        .from('folders')
+                        .select('*')
+                        .eq('id', current.parent_id)
+                        .single();
+
+                    if (parentError) break;
+                    ancestors.unshift(parentData);
+                    current = parentData;
+                }
+                setPath(ancestors);
+            } else {
+                setCurrentFolder(null);
+                setPath([]);
             }
 
             let query = supabase
@@ -65,17 +98,37 @@ export function useFolders(parentId: string | null = null, ownerId?: string) {
         } finally {
             setLoading(false);
         }
-    }, [parentId, user]);
+    }, [parentId, user, ownerId]);
 
     const createFolder = async (name: string) => {
         if (!user) throw new Error("Auth session missing!");
 
         try {
+            // Check for existing folder with same name at this level
+            let checkQuery = supabase
+                .from('folders')
+                .select('*')
+                .eq('user_id', user.id)
+                .eq('name', name.trim());
+
+            if (parentId) {
+                checkQuery = checkQuery.eq('parent_id', parentId);
+            } else {
+                checkQuery = checkQuery.is('parent_id', null);
+            }
+
+            const { data: existing } = await checkQuery.maybeSingle();
+
+            if (existing) {
+                return existing;
+            }
+
+            // Otherwise create new
             const { data, error } = await supabase
                 .from('folders')
                 .insert([
                     {
-                        name,
+                        name: name.trim(),
                         parent_id: parentId,
                         user_id: user.id
                     }
@@ -113,6 +166,8 @@ export function useFolders(parentId: string | null = null, ownerId?: string) {
 
     return {
         folders,
+        currentFolder,
+        path,
         loading,
         error,
         createFolder,

@@ -59,12 +59,12 @@ export function useUpload(): UseUploadReturn {
 
                 updateUpload(file, { progress: 50 });
 
-                // Get signed URL for private bucket
-                const { data: signedData } = await supabase.storage
+                // Get Public URL (consistent with portfolio_media)
+                const { data: { publicUrl } } = supabase.storage
                     .from(PHOTOS_BUCKET)
-                    .createSignedUrl(filePath, 3600);
+                    .getPublicUrl(filePath);
 
-                const storageUrl = signedData?.signedUrl || '';
+                const storageUrl = publicUrl;
 
                 // Update status to processing (AI)
                 updateUpload(file, { status: 'processing', progress: 60 });
@@ -74,16 +74,19 @@ export function useUpload(): UseUploadReturn {
 
                 updateUpload(file, { progress: 80 });
 
-                // Save to database with file_path for future signed URL generation
+                // Save to portfolio_media (Unified table)
                 const { error: dbError } = await supabase
-                    .from('photos')
+                    .from('portfolio_media')
                     .insert({
-                        storage_url: storageUrl,  // Initial signed URL
-                        file_path: filePath,       // Store path for regenerating signed URLs
-                        file_name: file.name,
-
-                        metadata,
-                        folder_id: folderId
+                        file_url: storageUrl,
+                        moment: metadata?.category || 'Outro',
+                        tags: metadata?.tags || [],
+                        description: metadata?.description || '',
+                        folder_id: folderId,
+                        type: 'Foto',
+                        usage_override: 'Liberado',
+                        publication_status: 'Não usado',
+                        is_hero: false
                     });
 
                 if (dbError) {

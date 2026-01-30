@@ -15,7 +15,7 @@ export default function NewWeddingPage() {
         try {
             setIsSubmitting(true);
             const wedding = await createWedding(data);
-            toast.success("Casamento criado! Agora você pode adicionar mídias.");
+            toast.success("Casamento criado com sucesso!");
             router.push(`/weddings/${wedding.id}`);
         } catch (error: any) {
             console.error("Failed to create wedding:", error);

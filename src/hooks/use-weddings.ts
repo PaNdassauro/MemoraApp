@@ -87,6 +87,8 @@ export function useWeddings() {
                     status: values.status,
                     destination_city: values.destination_city,
                     destination_country: values.destination_country,
+                    hotel_name: values.hotel_name,
+                    folder_id: values.folder_id || null,
                     slug
                 }])
                 .select()
@@ -106,6 +108,18 @@ export function useWeddings() {
                 const consentsPayload = values.consents.map(c => ({ ...c, wedding_id: wedding.id }));
                 const { error: consentsError } = await supabase.from('consents').insert(consentsPayload);
                 if (consentsError) console.error("Error creating consents:", consentsError);
+            }
+
+            // 4. Create Media if any
+            if (values.media && values.media.length > 0) {
+                const mediaPayload = values.media.map(m => ({
+                    ...m,
+                    wedding_id: wedding.id,
+                    user_id: wedding.user_id,
+                    folder_id: values.folder_id || wedding.folder_id || null
+                }));
+                const { error: mediaError } = await supabase.from('portfolio_media').insert(mediaPayload);
+                if (mediaError) console.error("Error creating portfolio media:", mediaError);
             }
 
             setWeddings((prev) => [wedding, ...prev]);
@@ -128,6 +142,8 @@ export function useWeddings() {
                     status: values.status,
                     destination_city: values.destination_city,
                     destination_country: values.destination_country,
+                    hotel_name: values.hotel_name,
+                    folder_id: values.folder_id,
                 })
                 .eq('id', id)
                 .select()
@@ -157,6 +173,7 @@ export function useWeddings() {
             .from('portfolio_media')
             .insert({
                 wedding_id: weddingId,
+                folder_id: media.folder_id || null,
                 file_url: media.file_url,
                 thumbnail_url: media.thumbnail_url || null,
                 type: media.type,
@@ -181,6 +198,7 @@ export function useWeddings() {
         const { data, error } = await supabase
             .from('portfolio_media')
             .update({
+                folder_id: media.folder_id,
                 file_url: media.file_url,
                 thumbnail_url: media.thumbnail_url,
                 type: media.type,

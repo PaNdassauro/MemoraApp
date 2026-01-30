@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -152,15 +153,16 @@ export function AppUI() {
                             <Home className="w-5 h-5" />
                             Início
                         </Button>
-                        <Button
-                            variant="ghost"
-                            className="w-full justify-start gap-3 transition-transform hover:translate-x-1"
-                            style={{ color: '#7F8C8D' }}
-                            onClick={() => router.push("/weddings")}
-                        >
-                            <HeartHandshake className="w-5 h-5" />
-                            Casamentos
-                        </Button>
+                        <Link href="/weddings" passHref className="w-full">
+                            <Button
+                                variant="ghost"
+                                className="w-full justify-start gap-3 transition-transform hover:translate-x-1 font-medium bg-amber-50/50 hover:bg-amber-50"
+                                style={{ color: '#AF8B5F' }}
+                            >
+                                <HeartHandshake className="w-5 h-5" />
+                                Casamentos
+                            </Button>
+                        </Link>
                         <Button variant="ghost" className="w-full justify-start gap-3 transition-transform hover:translate-x-1" style={{ color: '#7F8C8D' }}>
                             <Folder className="w-5 h-5" />
                             Minhas Pastas
